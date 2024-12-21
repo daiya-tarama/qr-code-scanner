@@ -9,7 +9,7 @@
         alert("QRコードを読み取りました: " + decodedText);
 
         const qrCode = decodedText;
-        const scriptUrl = "https://script.google.com/macros/s/AKfycby0tzVkKnPF4uLDT4PLvxQWzj_Gwkj2w1OYhlG_md8M830dRnZkI9Ai_N333IW9G319/exec" + encodeURIComponent(qrCode);
+        const scriptUrl = "https://script.google.com/macros/s/AKfycby0tzVkKnPF4uLDT4PLvxQWzj_Gwkj2w1OYhlG_md8M830dRnZkI9Ai_N333IW9G319/exec?qrCode=" + encodeURIComponent(qrCode);
 
         fetch(scriptUrl)
           .then(response => response.json())
