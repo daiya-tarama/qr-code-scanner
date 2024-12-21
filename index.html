@@ -4,22 +4,33 @@
     <title>QRコード読み取り</title>
     <script src="https://unpkg.com/html5-qrcode/html5-qrcode.min.js"></script>
     <script>
+      let lastScannedCode = null; // 最後にスキャンしたQRコードを保存
+
       function onScanSuccess(decodedText, decodedResult) {
         // QRコードの内容を取得
+        if (decodedText === lastScannedCode) {
+          // 前回と同じQRコードの場合は処理をスキップ
+          return;
+        }
+
+        lastScannedCode = decodedText; // 現在のQRコードを保存
+
         const qrCode = decodedText;
 
         // Google Apps Script の Web アプリ URL
-        const scriptUrl = "https://script.google.com/macros/s/AKfycby0tzVkKnPF4uLDT4PLvxQWzj_Gwkj2w1OYhlG_md8M830dRnZkI9Ai_N333IW9G319/exec?qrCode=" + encodeURIComponent(qrCode);
+        const scriptUrl =
+          "https://script.google.com/macros/s/AKfycby0tzVkKnPF4uLDT4PLvxQWzj_Gwkj2w1OYhlG_md8M830dRnZkI9Ai_N333IW9G319/exec?=" +
+          encodeURIComponent(qrCode);
 
         // サーバーにリクエスト送信
         fetch(scriptUrl)
-          .then(response => {
+          .then((response) => {
             if (!response.ok) {
               throw new Error(`HTTPエラー: ${response.status}`);
             }
             return response.json();
           })
-          .then(data => {
+          .then((data) => {
             // サーバーからのレスポンスを画面に表示
             const feedbackDiv = document.getElementById("feedback");
             feedbackDiv.innerText = data.message; // サーバーからのメッセージを表示
@@ -29,9 +40,10 @@
             setTimeout(() => {
               feedbackDiv.innerText = ""; // フィードバックをクリア
               feedbackDiv.style.display = "none"; // 非表示にする
+              lastScannedCode = null; // 再スキャン可能にする
             }, 3000);
           })
-          .catch(error => {
+          .catch((error) => {
             console.error("エラー:", error);
 
             // エラー時のフィードバックを表示
@@ -41,6 +53,7 @@
             setTimeout(() => {
               feedbackDiv.innerText = ""; // フィードバックをクリア
               feedbackDiv.style.display = "none"; // 非表示にする
+              lastScannedCode = null; // 再スキャン可能にする
             }, 3000);
           });
       }
