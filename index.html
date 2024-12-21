@@ -10,7 +10,7 @@
         const qrCode = decodedText; // QRコードの内容（受付番号）
         
         // Google Apps ScriptのURLにQRコードの受付番号をパラメータとして送信
-        const scriptUrl = "https://script.google.com/macros/s/{SCRIPT_ID}/exec?qrCode=" + qrCode;
+        const scriptUrl = "https://script.google.com/macros/s/AKfycby0tzVkKnPF4uLDT4PLvxQWzj_Gwkj2w1OYhlG_md8M830dRnZkI9Ai_N333IW9G319/exec" + qrCode;
         
         fetch(scriptUrl)
           .then(response => response.json())
