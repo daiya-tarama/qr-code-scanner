@@ -52,6 +52,12 @@
     }
   </style>
   <script>
+    // 定期リロード設定（5分ごと）
+          const reloadInterval = 3 * 60 * 1000; // 5分をミリ秒で
+          setTimeout(() => {
+            window.location.reload();
+          }, reloadInterval);
+    
     let lastScannedCode = null; // 最後にスキャンしたQRコードを保存
 
     function onScanSuccess(decodedText, decodedResult) {
