@@ -1,101 +1,120 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>QRコード読み取り</title>
-    <script src="https://unpkg.com/html5-qrcode/html5-qrcode.min.js"></script>
-    <script>
-      let lastScannedCode = null; // 最後にスキャンしたQRコードを保存
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QRコード読み取り</title>
+  <script src="https://unpkg.com/html5-qrcode/html5-qrcode.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+      text-align: center;
+    }
 
-      function onScanSuccess(decodedText, decodedResult) {
-        // QRコードの内容を取得
-        if (decodedText === lastScannedCode) {
-          // 前回と同じQRコードの場合は処理をスキップ
-          return;
-        }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
 
-        lastScannedCode = decodedText; // 現在のQRコードを保存
+    #instruction {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      color: #333;
+    }
 
-        const qrCode = decodedText;
+    #qr-reader {
+      width: 90%;
+      max-width: 400px;
+      height: auto;
+      aspect-ratio: 1 / 1; /* 正方形を保つ */
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      background-color: #fff;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
 
-        // Google Apps Script の Web アプリ URL
-        const scriptUrl = "https://script.google.com/macros/s/AKfycby0tzVkKnPF4uLDT4PLvxQWzj_Gwkj2w1OYhlG_md8M830dRnZkI9Ai_N333IW9G319/exec?qrCode=" + encodeURIComponent(qrCode);
+    #feedback {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      font-size: 1rem;
+      border-radius: 5px;
+      display: none;
+    }
+  </style>
+  <script>
+    let lastScannedCode = null; // 最後にスキャンしたQRコードを保存
 
-        // サーバーにリクエスト送信
-        fetch(scriptUrl)
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error(`HTTPエラー: ${response.status}`);
-            }
-            return response.json();
-          })
-          .then((data) => {
-            // サーバーからのレスポンスを画面に表示
-            const feedbackDiv = document.getElementById("feedback");
-            feedbackDiv.innerText = data.message; // サーバーからのメッセージを表示
-            feedbackDiv.style.display = "block"; // 表示する
-
-            // フィードバックを3秒後にクリア
-            setTimeout(() => {
-              feedbackDiv.innerText = ""; // フィードバックをクリア
-              feedbackDiv.style.display = "none"; // 非表示にする
-              lastScannedCode = null; // 再スキャン可能にする
-            }, 3000);
-          })
-          .catch((error) => {
-            console.error("エラー:", error);
-
-            // エラー時のフィードバックを表示
-            const feedbackDiv = document.getElementById("feedback");
-            feedbackDiv.innerText = "サーバーへのリクエストに失敗しました";
-            feedbackDiv.style.display = "block"; // 表示する
-            setTimeout(() => {
-              feedbackDiv.innerText = ""; // フィードバックをクリア
-              feedbackDiv.style.display = "none"; // 非表示にする
-              lastScannedCode = null; // 再スキャン可能にする
-            }, 3000);
-          });
+    function onScanSuccess(decodedText, decodedResult) {
+      if (decodedText === lastScannedCode) {
+        // 前回と同じQRコードの場合は処理をスキップ
+        return;
       }
 
-      function onScanFailure(error) {
-        // QRコード読み取り失敗時（エラーをコンソールに表示）
-        console.warn("QRコード読み取りエラー:", error);
-      }
+      lastScannedCode = decodedText;
 
-      window.onload = function () {
-        // QRコード読み取り機能の初期化
-        const html5QrCode = new Html5Qrcode("qr-reader");
-        html5QrCode.start(
-          { facingMode: "environment" }, // 背面カメラ
-          { fps: 10, qrbox: 250 }, // スキャン速度とエリア
-          onScanSuccess,
-          onScanFailure
-        );
-      };
-    </script>
-    <style>
-      #feedback {
-        position: fixed; /* 固定位置 */
-        bottom: 10%; /* 画面下部に配置 */
-        left: 50%; /* 中央寄せ */
-        transform: translateX(-50%); /* 中央に配置 */
-        padding: 10px;
-        background-color: rgba(0, 0, 0, 0.7); /* 半透明の背景 */
-        color: white; /* テキストの色を白に */
-        font-size: 18px;
-        border-radius: 5px;
-        display: none; /* 初期状態は非表示 */
-        text-align: center;
-        z-index: 1000; /* 前面に表示 */
-      }
+      const qrCode = decodedText;
+      const scriptUrl = "https://script.google.com/macros/s/AKfycby0tzVkKnPF4uLDT4PLvxQWzj_Gwkj2w1OYhlG_md8M830dRnZkI9Ai_N333IW9G319/exec?qrCode=" + encodeURIComponent(qrCode);
 
-      #qr-reader {
-        margin-top: 20px;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>QRコード読み取り</h1>
-    <div id="qr-reader" style="width: 300px; height: 300px;"></div>
-    <div id="feedback"></div> <!-- フィードバック表示用の領域 -->
-  </body>
+      fetch(scriptUrl)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTPエラー: `);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          const feedbackDiv = document.getElementById("feedback");
+          feedbackDiv.innerText = data.message;
+          feedbackDiv.style.display = "block";
+
+          setTimeout(() => {
+            feedbackDiv.innerText = "";
+            feedbackDiv.style.display = "none";
+            lastScannedCode = null; // 再スキャン可能にする
+          }, 3000);
+        })
+        .catch((error) => {
+          console.error("エラー:", error);
+          const feedbackDiv = document.getElementById("feedback");
+          feedbackDiv.innerText = "サーバーへのリクエストに失敗しました";
+          feedbackDiv.style.display = "block";
+          setTimeout(() => {
+            feedbackDiv.innerText = "";
+            feedbackDiv.style.display = "none";
+            lastScannedCode = null; // 再スキャン可能にする
+          }, 3000);
+        });
+    }
+
+    function onScanFailure(error) {
+      console.warn("QRコード読み取りエラー:", error);
+    }
+
+    window.onload = function () {
+      const html5QrCode = new Html5Qrcode("qr-reader");
+      html5QrCode.start(
+        { facingMode: "user" }, // フロントカメラを使用
+        { fps: 10, qrbox: 250 }, // スキャン速度とエリア
+        onScanSuccess,
+        onScanFailure
+      );
+    };
+  </script>
+</head>
+<body>
+  <h1>QRコード読み取り</h1>
+  <div id="instruction">QRコードをかざしてください</div>
+  <div id="qr-reader"></div>
+  <div id="feedback"></div>
+</body>
 </html>
