@@ -2,37 +2,41 @@
 <html>
   <head>
     <title>QRコード読み取り</title>
-    <!-- 修正したライブラリURL -->
-    <script src="https://unpkg.com/html5-qrcode/html5-qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html5-qrcode/minified/html5-qrcode.min.js"></script>
     <script>
       function onScanSuccess(decodedText, decodedResult) {
-        // QRコードが読み取られた場合の処理
-        const qrCode = decodedText; // QRコードの内容（受付番号）
-        
-        // Google Apps ScriptのURLにQRコードの受付番号をパラメータとして送信
-        const scriptUrl = "https://script.google.com/macros/s/AKfycby0tzVkKnPF4uLDT4PLvxQWzj_Gwkj2w1OYhlG_md8M830dRnZkI9Ai_N333IW9G319/exec" + qrCode;
-        
+        console.log("QRコードの内容:", decodedText);
+        alert("QRコードを読み取りました: " + decodedText);
+
+        const qrCode = decodedText;
+        const scriptUrl = "https://script.google.com/macros/s/AKfycby0tzVkKnPF4uLDT4PLvxQWzj_Gwkj2w1OYhlG_md8M830dRnZkI9Ai_N333IW9G319/exec" + encodeURIComponent(qrCode);
+
         fetch(scriptUrl)
           .then(response => response.json())
           .then(data => {
-            alert(data.message); // メッセージ表示
-            // 3秒後に初期画面に戻す
+            console.log("サーバーのレスポンス:", data);
+            alert(data.message);
             setTimeout(() => {
-              window.location.reload(); // ページをリロードして初期画面に戻す
+              window.location.reload();
             }, 3000);
           })
-          .catch(error => console.error("Error:", error));
+          .catch(error => console.error("エラー:", error));
       }
 
       function onScanFailure(error) {
-        // エラー処理（ここでは何もしませんが、必要に応じて追加できます）
-        console.error("QRコードの読み取りに失敗しました:", error);
+        console.log("QRコードのスキャン失敗:", error);
       }
 
       window.onload = function() {
-        // QRコードのスキャンを開始
         const html5QrCode = new Html5Qrcode("qr-reader");
-        html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, onScanSuccess, onScanFailure);
+        html5QrCode.start(
+          { facingMode: "environment" },
+          { fps: 10, qrbox: 250 },
+          onScanSuccess,
+          onScanFailure
+        ).catch((err) => {
+          console.error("QRコード初期化エラー:", err);
+        });
       };
     </script>
   </head>
