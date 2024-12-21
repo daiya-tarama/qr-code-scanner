@@ -5,25 +5,31 @@
     <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
     <script>
       function onScanSuccess(decodedText, decodedResult) {
-        const qrCode = decodedText;
+        // QRコードが読み取られた場合の処理
+        const qrCode = decodedText; // QRコードの内容（受付番号）
+        
+        // Google Apps ScriptのURLにQRコードの受付番号をパラメータとして送信
         const scriptUrl = "https://script.google.com/macros/s/{SCRIPT_ID}/exec?qrCode=" + qrCode;
-
+        
         fetch(scriptUrl)
           .then(response => response.json())
           .then(data => {
-            alert(data.message);
+            alert(data.message); // メッセージ表示
+            // 3秒後に初期画面に戻す
             setTimeout(() => {
-              window.location.reload();
+              window.location.reload(); // ページをリロードして初期画面に戻す
             }, 3000);
           })
           .catch(error => console.error("Error:", error));
       }
 
       function onScanFailure(error) {
-        console.error("Scan failed: ", error);
+        // エラー処理（ここでは何もしませんが、必要に応じて追加できます）
+        console.error("QRコードの読み取りに失敗しました:", error);
       }
 
       window.onload = function() {
+        // QRコードのスキャンを開始
         const html5QrCode = new Html5Qrcode("qr-reader");
         html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, onScanSuccess, onScanFailure);
       };
@@ -32,5 +38,6 @@
   <body>
     <h1>QRコード読み取り</h1>
     <div id="qr-reader" style="width: 300px; height: 300px;"></div>
+    <div id="qr-result" style="margin-top: 20px;"></div> <!-- 結果を表示するエリア -->
   </body>
 </html>
