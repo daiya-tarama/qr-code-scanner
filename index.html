@@ -2,7 +2,8 @@
 <html>
   <head>
     <title>QRコード読み取り</title>
-    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <!-- 修正したライブラリURL -->
+    <script src="https://unpkg.com/html5-qrcode/html5-qrcode.min.js"></script>
     <script>
       function onScanSuccess(decodedText, decodedResult) {
         // QRコードが読み取られた場合の処理
@@ -38,6 +39,5 @@
   <body>
     <h1>QRコード読み取り</h1>
     <div id="qr-reader" style="width: 300px; height: 300px;"></div>
-    <div id="qr-result" style="margin-top: 20px;"></div> <!-- 結果を表示するエリア -->
   </body>
 </html>
