@@ -104,7 +104,7 @@
       const html5QrCode = new Html5Qrcode("qr-reader");
       html5QrCode.start(
         { facingMode: "user" }, // フロントカメラを使用
-        { fps: 10, qrbox: 250 }, // スキャン速度とエリア
+        { fps: 20, qrbox: 250 }, // スキャン速度とエリア
         onScanSuccess,
         onScanFailure
       );
@@ -112,7 +112,7 @@
   </script>
 </head>
 <body>
-  <h1>QRコード読み取り</h1>
+  <h1>球陽22期同窓会 1次会受付</h1>
   <div id="instruction">QRコードをかざしてください</div>
   <div id="qr-reader"></div>
   <div id="feedback"></div>
