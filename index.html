@@ -1,100 +1,92 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>予約受付システム</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background-color: #f4f4f9;
-    }
-    .container {
-      text-align: center;
-      background: #fff;
-      padding: 20px 30px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      border-radius: 10px;
-    }
-    h1 {
-      font-size: 24px;
-      margin-bottom: 20px;
-    }
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      font-size: 18px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    button {
-      width: 100%;
-      padding: 10px;
-      background-color: #4caf50;
-      color: #fff;
-      font-size: 18px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #45a049;
-    }
-    .message {
-      margin-top: 20px;
-      font-size: 16px;
-      color: #333;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>３０歳に乾杯！球陽２２期同窓会１次会受付システム</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            width: 80%;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>予約受付システム</h1>
-    <p>6桁の予約番号を入力してください:</p>
-    <input type="text" id="reservationNumber" maxlength="6" placeholder="例: 123456">
-    <button onclick="submitReservation()">送信</button>
-    <div class="message" id="message"></div>
-  </div>
+    <div class="container">
+        <h1>３０歳に乾杯！球陽２２期同窓会１次会受付システム</h1>
+        <input type="text" id="reservationNumber" placeholder="６桁の予約番号を入力" maxlength="6" oninput="validateInput()">
+        <br>
+        <button onclick="submitForm()">送信</button>
+        <div class="result" id="result"></div>
+    </div>
 
-  <script>
-    async function submitReservation() {
-      const reservationNumber = document.getElementById("reservationNumber").value;
-      const messageDiv = document.getElementById("message");
-
-      // 入力チェック
-      if (!/^\d{6}$/.test(reservationNumber)) {
-        messageDiv.textContent = "正しい6桁の予約番号を入力してください。";
-        return;
-      }
-
-      try {
-        const response = await fetch("CLOUD_FUNCTION_URL", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ reservationNumber })
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-          messageDiv.textContent = `${result.name} さん: ${result.message}`;
-        } else {
-          messageDiv.textContent = `エラー: ${result.message}`;
+    <script>
+        function validateInput() {
+            const input = document.getElementById('reservationNumber');
+            const value = input.value;
+            // 半角数字のみ許可
+            input.value = value.replace(/[^0-9]/g, '');
         }
-      } catch (error) {
-        console.error(error);
-        messageDiv.textContent = "サーバーへのリクエストに失敗しました。";
-      }
-    }
-  </script>
+
+        function submitForm() {
+            const reservationNumber = document.getElementById('reservationNumber').value;
+            if (reservationNumber.length === 6) {
+                fetch(`https://script.google.com/macros/s/AKfycbwTj7C2f9VeOs-BNyvyeWWxwAt3MF3lRmyBo6fG7wOXby8rQivCDKK9MxYNs5sRk6xD/exec?number=${reservationNumber}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById('result').textContent = `受付完了: ${data.name} さん`;
+                        } else {
+                            document.getElementById('result').textContent = data.message;
+                        }
+                    })
+                    .catch(error => {
+                        document.getElementById('result').textContent = "システムエラーが発生しました。後ほど再試行してください。";
+                    });
+            } else {
+                document.getElementById('result').textContent = "６桁の番号を入力してください。";
+            }
+        }
+    </script>
 </body>
 </html>
