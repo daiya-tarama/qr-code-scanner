@@ -81,7 +81,7 @@
         function submitForm() {
             const reservationNumber = document.getElementById('reservationNumber').value;
             if (reservationNumber.length === 6) {
-                fetch(`https://script.google.com/macros/s/AKfycbwhmFjAWBFoakg_p0nBISAiiJikENNN0X3AjGjRN_r32r94Wgt9UENAYqUoMOhkDvH2/exec?number=${reservationNumber}`)
+                fetch(`https://script.google.com/macros/s/AKfycbxWS5vxHh1dMsSs1VPM4IVaUJS3H0V5SerqcHHWeo1eG1GkBLMZHcjyCpulNs0gnxTC/exec?number=${reservationNumber}`)
                     .then(response => {
                         if (!response.ok) {
                             throw new Error('ネットワークの問題が発生しました');
