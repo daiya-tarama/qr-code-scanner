@@ -75,7 +75,7 @@
       }
 
       try {
-        const response = await fetch("CLOUD_FUNCTION_URL", {
+        const response = await fetch("https://asia-northeast2-charged-wares-446011-t2.cloudfunctions.net/checkReservation", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
