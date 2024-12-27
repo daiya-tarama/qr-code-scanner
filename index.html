@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>３０歳に乾杯！<br>球陽２２期同窓会１次会受付システム</title>
+    <title>３０歳に乾杯！ 球陽２２期同窓会１次会受付システム</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -49,11 +49,21 @@
             font-size: 18px;
             color: #333;
         }
+
+        /* レスポンシブデザイン */
+        @media (max-width: 600px) {
+            .container {
+                width: 90%;
+            }
+            input[type="text"], button {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>３０歳に乾杯！球陽２２期同窓会１次会受付システム</h1>
+        <h1>３０歳に乾杯！</h1><h1> 球陽２２期同窓会１次会受付システム</h1>
         <input type="text" id="reservationNumber" placeholder="６桁の予約番号を入力" maxlength="6" oninput="validateInput()">
         <br>
         <button onclick="submitForm()">送信</button>
@@ -72,7 +82,12 @@
             const reservationNumber = document.getElementById('reservationNumber').value;
             if (reservationNumber.length === 6) {
                 fetch(`https://script.google.com/macros/s/AKfycbwhmFjAWBFoakg_p0nBISAiiJikENNN0X3AjGjRN_r32r94Wgt9UENAYqUoMOhkDvH2/exec?number=${reservationNumber}`)
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('ネットワークの問題が発生しました');
+                        }
+                        return response.json();
+                    })
                     .then(data => {
                         if (data.success) {
                             document.getElementById('result').textContent = `受付完了: ${data.name} さん`;
@@ -82,6 +97,7 @@
                     })
                     .catch(error => {
                         document.getElementById('result').textContent = "システムエラーが発生しました。後ほど再試行してください。";
+                        console.error("Error:", error);  // デバッグ用のエラーメッセージ
                     });
             } else {
                 document.getElementById('result').textContent = "６桁の番号を入力してください。";
