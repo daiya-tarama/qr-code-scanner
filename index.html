@@ -71,7 +71,7 @@
         function submitForm() {
             const reservationNumber = document.getElementById('reservationNumber').value;
             if (reservationNumber.length === 6) {
-                fetch(`https://script.google.com/macros/s/AKfycbwTj7C2f9VeOs-BNyvyeWWxwAt3MF3lRmyBo6fG7wOXby8rQivCDKK9MxYNs5sRk6xD/exec?number=${reservationNumber}`)
+                fetch(`https://script.google.com/macros/s/AKfycbwhmFjAWBFoakg_p0nBISAiiJikENNN0X3AjGjRN_r32r94Wgt9UENAYqUoMOhkDvH2/exec?number=${reservationNumber}`)
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
