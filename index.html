@@ -18,10 +18,25 @@
       background-color: #f4f4f9;
     }
 
-    h1 {
-      color: #333;
+    
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px; /* 各行の間隔を調整 */
     }
 
+    .line1 {
+      font-size: 48px; /* 1行目の文字サイズ */
+      font-weight: bold; /* 太字にする */
+      white-space: nowrap; /* 改行を防止 */
+    }
+
+    .line2 {
+      font-size: 36px; /* 2行目の文字サイズ */
+      font-weight: normal;
+      white-space: nowrap; /* 改行を防止 */
+    }
+    
     #form {
       display: flex;
       flex-direction: column;
@@ -63,8 +78,10 @@
   </style>
 </head>
 <body>
-  <h2>30歳に乾杯！球陽２２期同窓会</h2>
-  <h1>１次会受付システム</h1>
+  <div class="container">
+    <div class="line1">30歳に乾杯！球陽２２期同窓会</div>
+    <div class="line2">１次会受付システム</div>
+  </div>
   <div id="form">
     <input type="text" id="receptionNumber" placeholder="受付番号(6桁)を入力してください" />
     <button onclick="submitReception()">送信</button>
