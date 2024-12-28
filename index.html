@@ -1,116 +1,95 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>３０歳に乾杯！ 球陽２２期同窓会１次会受付システム</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f4;
-        }
-        .container {
-            text-align: center;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 500px;
-        }
-        input[type="text"] {
-            padding: 10px;
-            font-size: 16px;
-            width: 80%;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .result {
-            margin-top: 20px;
-            font-size: 18px;
-            color: #333;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>受付システム</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f4f4f9;
+    }
 
-        /* レスポンシブデザイン */
-        @media (max-width: 600px) {
-            .container {
-                width: 90%;
-            }
-            input[type="text"], button {
-                width: 100%;
-            }
-        }
-    </style>
+    h1 {
+      color: #333;
+    }
+
+    #form {
+      display: flex;
+      flex-direction: column;
+      width: 80%;
+      max-width: 400px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px;
+      background-color: #007BFF;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #message {
+      margin-top: 20px;
+      font-size: 16px;
+      color: #333;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>３０歳に乾杯！ 球陽２２期同窓会１次会受付システム</h1>
-        <input type="text" id="reservationNumber" placeholder="６桁の予約番号を入力" maxlength="6" oninput="validateInput()">
-        <br>
-        <button onclick="submitForm()">送信</button>
-        <div class="result" id="result"></div>
-    </div>
+  <h1>受付システム</h1>
+  <div id="form">
+    <input type="text" id="receptionNumber" placeholder="受付番号を入力してください" />
+    <button onclick="submitReception()">送信</button>
+    <div id="message"></div>
+  </div>
 
-    <script>
-        // 入力された値が半角数字のみになるようにする関数
-        function validateInput() {
-            const input = document.getElementById('reservationNumber');
-            const value = input.value;
-            // 半角数字のみ許可
-            input.value = value.replace(/[^0-9]/g, '');
-        }
+  <script>
+    function submitReception() {
+      const receptionNumber = document.getElementById('receptionNumber').value;
+      const scriptUrl = "https://script.google.com/macros/s/AKfycby0MIo9Mm6h6YIxsLjvzwgQ-m7_3v6cM-IElhnmYTdeiHZIPGcjmcoQW1AefKy3ehS3/exec";
 
-        // フォームを送信して、Google Apps Script にリクエストを送る関数
-        function submitForm() {
-            const reservationNumber = document.getElementById('reservationNumber').value;
-            if (reservationNumber.length === 6) {
-                // fetch() で Google Apps Script の API にリクエストを送信
-                fetch(`https://script.google.com/macros/s/AKfycbwm3cPtSGLz-8IkbZ_ciQa0SQCLIFnAOpDkVOV-CABL6IZRERT6EKzBgd_doHGeT_SZ/exec?number=${reservationNumber}`)
-                    .then(response => {
-                        // レスポンスが正常でない場合のエラーチェック
-                        if (!response.ok) {
-                            throw new Error('ネットワークの問題が発生しました');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        // サーバーからのレスポンスを確認
-                        if (data.success) {
-                            document.getElementById('result').textContent = `受付完了: ${data.name} さん`;
-                        } else {
-                            document.getElementById('result').textContent = data.message;
-                        }
-                    })
-                    .catch(error => {
-                        // エラーメッセージを画面に表示
-                        document.getElementById('result').textContent = "システムエラーが発生しました。後ほど再試行してください。";
-                        // コンソールにエラーメッセージを表示（デバッグ用）
-                        console.error("Error occurred:", error.message);  // 詳細なエラーメッセージ
-                    });
-            } else {
-                // 6桁以外の番号が入力された場合
-                document.getElementById('result').textContent = "６桁の番号を入力してください。";
-            }
-        }
-    </script>
+      if (receptionNumber.trim() === "") {
+        document.getElementById("message").textContent = "受付番号を入力してください。";
+        return;
+      }
+
+      fetch(`${scriptUrl}?receptionNumber=${receptionNumber}`)
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById("message").textContent = data.message;
+        })
+        .catch(error => {
+          document.getElementById("message").textContent = "エラーが発生しました。再度お試しください。";
+          console.error("Error:", error);
+        });
+    }
+  </script>
 </body>
 </html>
