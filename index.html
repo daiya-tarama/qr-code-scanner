@@ -63,7 +63,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>３０歳に乾杯！</h1><h2> 球陽２２期同窓会１次会受付システム</h2>
+        <h1>３０歳に乾杯！ 球陽２２期同窓会１次会受付システム</h1>
         <input type="text" id="reservationNumber" placeholder="６桁の予約番号を入力" maxlength="6" oninput="validateInput()">
         <br>
         <button onclick="submitForm()">送信</button>
@@ -71,6 +71,7 @@
     </div>
 
     <script>
+        // 入力された値が半角数字のみになるようにする関数
         function validateInput() {
             const input = document.getElementById('reservationNumber');
             const value = input.value;
@@ -78,17 +79,21 @@
             input.value = value.replace(/[^0-9]/g, '');
         }
 
+        // フォームを送信して、Google Apps Script にリクエストを送る関数
         function submitForm() {
             const reservationNumber = document.getElementById('reservationNumber').value;
             if (reservationNumber.length === 6) {
-                fetch(`https://script.google.com/macros/s/AKfycbx22Ma8Uu6rSvR2V71cFIPs3IpC3kLDRNhuM_tr84qXeqeOCipzY7NX_hHLyljjwBYv/exec?number=${reservationNumber}`)
+                // fetch() で Google Apps Script の API にリクエストを送信
+                fetch(`https://script.google.com/macros/s/AKfycbwm3cPtSGLz-8IkbZ_ciQa0SQCLIFnAOpDkVOV-CABL6IZRERT6EKzBgd_doHGeT_SZ/exec?number=${reservationNumber}`)
                     .then(response => {
+                        // レスポンスが正常でない場合のエラーチェック
                         if (!response.ok) {
                             throw new Error('ネットワークの問題が発生しました');
                         }
                         return response.json();
                     })
                     .then(data => {
+                        // サーバーからのレスポンスを確認
                         if (data.success) {
                             document.getElementById('result').textContent = `受付完了: ${data.name} さん`;
                         } else {
@@ -96,10 +101,13 @@
                         }
                     })
                     .catch(error => {
+                        // エラーメッセージを画面に表示
                         document.getElementById('result').textContent = "システムエラーが発生しました。後ほど再試行してください。";
-                        console.error("Error:", error);  // デバッグ用のエラーメッセージ
+                        // コンソールにエラーメッセージを表示（デバッグ用）
+                        console.error("Error occurred:", error.message);  // 詳細なエラーメッセージ
                     });
             } else {
+                // 6桁以外の番号が入力された場合
                 document.getElementById('result').textContent = "６桁の番号を入力してください。";
             }
         }
